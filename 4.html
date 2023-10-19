@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cuerda Floja VR</title>
+    <script src="https://aframe.io/releases/latest/aframe.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+      }
+      a-scene {
+        height: 100vh;
+        width: 100vw;
+      }
+    </style>
+    <script>
+      let isFalling = false;
+
+      window.addEventListener("deviceorientation", function (event) {
+        // Asumiendo que alpha es la rotación alrededor del eje Z (giro).
+        // En algunos dispositivos puede que necesites usar beta o gamma dependiendo de la orientación.
+        let tilt = event.alpha;
+
+        // Definimos un umbral, por ejemplo, si el dispositivo se inclina más de 10 grados.
+        if (tilt > 10 || tilt < -10) {
+          if (!isFalling) {
+            // El jugador está cayendo
+            fall();
+            isFalling = true;
+          }
+        } else {
+          isFalling = false;
+        }
+      });
+
+      function fall() {
+        // Aquí puedes implementar lo que sucederá cuando el jugador caiga.
+        // Por ejemplo, reiniciar el juego, mostrar una animación, etc.
+        alert("¡Te has caído!");
+      }
+    </script>
+    <script>
+      if (typeof DeviceOrientationEvent.requestPermission === "function") {
+        // iOS 13+
+        DeviceOrientationEvent.requestPermission()
+          .then((permissionState) => {
+            if (permissionState === "granted") {
+              window.addEventListener("deviceorientation", handleOrientation);
+            }
+          })
+          .catch(console.error);
+      } else {
+        // No es iOS 13+
+        window.addEventListener("deviceorientation", handleOrientation);
+      }
+
+      function handleOrientation(event) {
+        // Código de manejo del giroscopio aquí...
+      }
+    </script>
+  </head>
+  <body>
+    <a-scene>
+      <!-- Cuerda floja horizontal a una altura de 0.8 metros. -->
+      <a-cylinder
+        position="0 0.8 -5"
+        rotation="0 90 90"
+        radius="0.05"
+        height="10"
+        color="#8B4513"
+      ></a-cylinder>
+
+      <!-- Suelo -->
+      <a-plane
+        position="0 -20 -20"
+        rotation="-90 0 0"
+        width="100"
+        height="100"
+        color="#0000FF"
+      ></a-plane>
+
+      <!-- Cielo -->
+      <a-sky color="#0000FF"></a-sky>
+
+      <!-- Cámara con restricciones de movimiento. Solo puede mirar alrededor y moverse hacia adelante. -->
+      <a-entity
+        camera
+        position="0 1.6 0"
+        look-controls
+        wasd-controls="fly: false; adEnabled: false;"
+      ></a-entity>
+    </a-scene>
+  </body>
+</html>
